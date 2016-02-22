@@ -147,7 +147,6 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 
 # Android
-PUSHY_GCM_API_KEY = 'AIzaSyCGJyW-mxi_WoIqkmzT74PLKv49B0VvHF0'
 
 # Send JSON or plaintext payload to GCM server (default is JSON)
 PUSHY_GCM_JSON_PAYLOAD = True
