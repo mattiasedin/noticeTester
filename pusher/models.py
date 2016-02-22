@@ -4,23 +4,27 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 
-class UserData(models.Model):
-	user = models.OneToOneField(User)
-	deviceID = models.CharField(max_length=255, blank=False, default='')
+# class UserData(models.Model):
+# 	user = models.OneToOneField(User)
+# 	deviceID = models.CharField(max_length=255, blank=False, default='')
 
 
-class notificationData(models.Model):
-	user = models.ForeignKey(User)
-	timeDelta = models.PositiveIntegerField(default=0)
+# class notificationData(models.Model):
+# 	user = models.ForeignKey(User)
+# 	timeDelta = models.PositiveIntegerField(default=0)
 
-	LOW = 0
-	NORMAL = 1
-	HIGH = 2
+# 	LOW = 0
+# 	NORMAL = 1
+# 	HIGH = 2
 
-	STATUS_CHOICES = (
-	    (LOW, 'Low'),
-	    (NORMAL, 'Normal'),
-	    (HIGH, 'High'),
-	)
+# 	STATUS_CHOICES = (
+# 	    (LOW, 'Low'),
+# 	    (NORMAL, 'Normal'),
+# 	    (HIGH, 'High'),
+# 	)
 
-	stresslevel = models.PositiveIntegerField(choices=STATUS_CHOICES, default=0)
+# 	stresslevel = models.PositiveIntegerField(choices=STATUS_CHOICES, default=0)
+
+class UserDevice(models.Model):
+	owner = models.OneToOneField('auth.User', related_name='deviceInfo')
+	deviceId = models.CharField(max_length=255, blank=False, unique=True)

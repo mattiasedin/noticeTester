@@ -28,7 +28,7 @@ from pusher import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     #url(r'^', include(router.urls)),
-    url(r'^pusher/', include('pusher.urls', namespace="pusher")),
+    url(r'^api/', include('pusher.urls', namespace="pusher")),
     #url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
     
     
