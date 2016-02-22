@@ -146,8 +146,6 @@ STATICFILES_DIRS = (
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 
-# Android
-
 # Send JSON or plaintext payload to GCM server (default is JSON)
 PUSHY_GCM_JSON_PAYLOAD = True
 
