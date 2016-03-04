@@ -175,8 +175,13 @@ REST_FRAMEWORK = {
     #    'rest_framework.authentication.BasicAuthentication',
     #    'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     #),
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
 }
+
 
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH' : True
