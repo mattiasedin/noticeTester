@@ -56,8 +56,8 @@ class JSONResponse(HttpResponse):
 
 
 @api_view(['GET'])
-@authentication_classes((SessionAuthentication, BasicAuthentication))
-@permission_classes((IsAuthenticated,))
+#@authentication_classes((SessionAuthentication, BasicAuthentication))
+#@permission_classes((IsAuthenticated,))
 def user_list(request):
     """
     List all code snippets, or create a new snippet.

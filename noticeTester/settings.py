@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'djcelery',
     'pushy',
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -167,10 +168,13 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
+    #'DEFAULT_AUTHENTICATION_CLASSES': (
+    #    'rest_framework.authentication.SessionAuthentication',
+    #    'rest_framework.authentication.BasicAuthentication',
+    #    'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    #),
     'PAGE_SIZE': 10
 }
 

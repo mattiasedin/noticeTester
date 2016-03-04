@@ -1,22 +1,12 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import url
 from . import views
-
-from rest_framework import routers
-from rest_framework_jwt import views as rest_views
-
-router = routers.DefaultRouter()
-#router.register(r'users', views.UserViewSet)
-#router.register(r'groups', views.GroupViewSet)
-#router.register(r'accounts', views.UserView, 'list')
+from rest_framework.authtoken import views as rest_views
 
 
 urlpatterns = [
-    #url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    #url(r'^api/', include(router.urls)),
     url(r'^users/', views.user_list),
     url(r'^register/', views.create_auth),
-    url(r'^token-auth/', rest_views.obtain_jwt_token),
-    url(r'^token-refresh/', rest_views.refresh_jwt_token),
+    url(r'^token-auth/', rest_views.obtain_auth_token),
 ]
 
 
