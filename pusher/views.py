@@ -4,44 +4,18 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User, Group
+from django.db import IntegrityError
 
 from rest_framework import viewsets, generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 
 from .models import *
 from .serializers import *
-
-
-
-# class UserViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows users to be viewed or edited.
-#     """
-#     queryset = User.objects.all().order_by('-date_joined')
-#     serializer_class = UserSerializer
-
-
-# class GroupViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows groups to be viewed or edited.
-#     """
-#     queryset = Group.objects.all()
-#     serializer_class = GroupSerializer
-
-
-# class UserView(viewsets.ModelViewSet):
-#     serializer_class = UserSerializer
-#     model = User
- 
-#     def get_permissions(self):
-#         # allow non-authenticated user to create via POST
-#         return (AllowAny() if self.request.method == 'POST'
-#                 else IsStaffOrTargetUser()),
 
 
 @api_view(['GET'])
@@ -60,16 +34,6 @@ def user_list(request):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
-        #return JsonResponse(serializer.data)
-        #return JSONResponse(serializer.data)
-
-    # elif request.method == 'POST':
-    #     data = JSONParser().parse(request)
-    #     serializer = UserSerializer(data=data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return JSONResponse(serializer.data, status=201)
-    #     return JSONResponse(serializer.errors, status=400)
 
 @csrf_exempt
 #@api_view(['POST'])
@@ -92,7 +56,9 @@ def create_auth(request):
                     userDevice = UserDevice(owner=user, deviceId=deviceId)
 
                     userDevice.save()
-                return JsonResponse({"message": "user created"}, status=status.HTTP_201_CREATED)
+                    return JsonResponse({'message': "user successfully created"}, status=status.HTTP_201_CREATED)
+                return JsonResponse({'error': "an error has occured"}, status=status.HTTP_400_BAD_REQUEST)
+                #return JsonResponse(token, status=status.HTTP_201_CREATED)
                 #return HttpResponse("user created", status=status.HTTP_201_CREATED)
                 #return Response("user created", status=status.HTTP_201_CREATED)
             except IntegrityError as e:
