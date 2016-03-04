@@ -70,13 +70,13 @@ class registerUserSerializer(serializers.HyperlinkedModelSerializer):
     deviceId = serializers.CharField(source='deviceInfo.deviceId')
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'deviceId')
+        fields = ('username', 'password', 'deviceId')
     def create(self, validated_data):
         device_data = validated_data.pop('deviceInfo').pop('deviceId')
         
 
     def validate(self, data):
-        if set(['username', 'email', 'password', 'deviceInfo']).issubset(data):
+        if set(['username', 'password', 'deviceInfo']).issubset(data):
             return data
         else:
             raise serializers.ValidationError("All field must be present")
