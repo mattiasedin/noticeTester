@@ -13,8 +13,6 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 
-import jwt
-
 from .models import *
 from .serializers import *
 
@@ -44,15 +42,6 @@ from .serializers import *
 #         # allow non-authenticated user to create via POST
 #         return (AllowAny() if self.request.method == 'POST'
 #                 else IsStaffOrTargetUser()),
-
-class JSONResponse(HttpResponse):
-    """
-    An HttpResponse that renders its content into JSON.
-    """
-    def __init__(self, data, **kwargs):
-        content = JSONRenderer().render(data)
-        kwargs['content_type'] = 'application/json'
-        super(JSONResponse, self).__init__(content, **kwargs)
 
 
 @api_view(['GET'])
