@@ -40,10 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pusher',
-    'djcelery',
-    'pushy',
     'rest_framework',
     'rest_framework.authtoken',
+   
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -147,20 +146,6 @@ STATICFILES_DIRS = (
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 
-# Send JSON or plaintext payload to GCM server (default is JSON)
-PUSHY_GCM_JSON_PAYLOAD = True
-
-# iOS
-PUSHY_APNS_SANDBOX = True or False
-PUSHY_APNS_KEY_FILE = 'PATH_TO_KEY_FILE'
-PUSHY_APNS_CERTIFICATE_FILE = 'PATH_TO_CERTIFICATE_FILE'
-
-PUSHY_QUEUE_DEFAULT_NAME = 'default'
-PUSHY_DEVICE_KEY_LIMIT = 1000
-
-
-import djcelery
-djcelery.setup_loader()
 
 
 REST_FRAMEWORK = {
@@ -183,7 +168,8 @@ REST_FRAMEWORK = {
     ),
 }
 
+#import djcelery
+#djcelery.setup_loader()
 
-JWT_AUTH = {
-    'JWT_ALLOW_REFRESH' : True
-}
+#CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
