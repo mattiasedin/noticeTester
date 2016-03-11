@@ -48,10 +48,8 @@ def create_auth(request):
                     user = UserDevice.objects.get(deviceId=deviceId)
                     return HttpResponse("user with device already exists", status=status.HTTP_400_BAD_REQUEST)
                 except UserDevice.DoesNotExist:
-                    user = User.objects.create_user(
-                       serialized.initial_data['username'],
-                       serialized.initial_data['username'],
-                       serialized.initial_data['password']
+                    user = User.objects.create_user(username=serialized.initial_data['username'],
+                        password=serialized.initial_data['password']
                     )
                     userDevice = UserDevice(owner=user, deviceId=deviceId)
 
@@ -73,3 +71,26 @@ def create_auth(request):
         return JsonResponse({'error': "an error has occured"}, status=400)
         #return Response("an error has occured", status=status.HTTP_400_BAD_REQUEST)
         #return HttpResponse("an error has occured", status=status.HTTP_400_BAD_REQUEST)
+        #
+@csrf_exempt
+def register_participant(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        serialized = ParticipantSerializer(data=data)
+        if serialized.is_valid():
+            serialized.save()
+            return JsonResponse({'message': "participant registered"}, status=status.HTTP_201_CREATED)
+        return JsonResponse(serialized.errors, status=400)
+    return JsonResponse({'error': "can only accept POST request"}, status=400)
+
+@csrf_exempt
+def save_notification_data(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        serialized = NotificationDataSerializer(data=data)
+        import pdb;pdb.set_trace()
+        if serialized.is_valid():
+            serialized.save()
+            return JsonResponse({'message': "data registered"}, status=status.HTTP_201_CREATED)
+        return JsonResponse(serialized.errors, status=400)
+    return JsonResponse({'error': "can only accept POST request"}, status=400)

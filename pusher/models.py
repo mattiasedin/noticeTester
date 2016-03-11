@@ -41,3 +41,33 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 class UserDevice(models.Model):
 	owner = models.OneToOneField('auth.User', related_name='deviceInfo')
 	deviceId = models.CharField(max_length=255, blank=False, unique=True)
+
+class Participant(models.Model):
+	deviceId = models.CharField(max_length=255, blank=False, unique=True)
+
+	GENDER_CHOICES = (
+        ("M", "MALE"),
+        ("F", "FEMALE"),
+    )
+	gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=False, default="_")
+
+	OCCUPATION_CHOICES = (
+        ("S", "STUDENT"),
+        ("E", "EMPLOYED"),
+        ("O", "OTHER"),
+    )
+    
+	occupation = models.CharField(max_length=1, choices=OCCUPATION_CHOICES, blank=False, default="_" )
+
+class NotificationData(models.Model):
+	owner = models.ForeignKey(Participant, null=False)
+	received = models.DateField(verbose_name = 'Date recieved')
+	responded = models.DateField(verbose_name = 'Date responded')
+
+	LOCATION_CHOICES = (
+        ("H", "HOME"),
+        ("S", "SCHOOL/UNIVERSITY"),
+        ("W", "WORK"),
+        ("O", "OTHER"),
+    )
+	location = models.CharField(max_length=1, choices=LOCATION_CHOICES, blank=False, default="_")

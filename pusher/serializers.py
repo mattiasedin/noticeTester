@@ -80,3 +80,47 @@ class registerUserSerializer(serializers.HyperlinkedModelSerializer):
             return data
         else:
             raise serializers.ValidationError("All field must be present")
+
+
+
+class ParticipantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Participant
+        fields = '__all__'
+
+class NotificationDataSerializer(serializers.ModelSerializer):
+    #deviceId = serializers.CharField(source='Participant.deviceId')
+    owner = serializers.SlugRelatedField(
+        many=False,
+        read_only=False,
+        slug_field='deviceId',
+        queryset=Participant.objects.all()
+    )
+    #deviceId = serializers.CharField(max_length=255, allow_blank=False, read_only=True)
+
+    class Meta:
+        model = NotificationData
+        fields = ('owner','received','responded', 'location')
+        extra_kwargs = {
+            'received': {
+                'format':['%Y-%m-%d %H:%M:%S'],
+                'input_formats':['%Y-%m-%d %H:%M:%S']
+            },
+            'responded': {
+                'format':['%Y-%m-%d %H:%M:%S'],
+                'input_formats':['%Y-%m-%d %H:%M:%S']
+            }
+        }        
+
+    # def create(self, validated_data):
+    #     import pdb;pdb.set_trace()
+    #     ide = validated_data.pop('deviceId')
+    #     participant = Participant.objects.get(deviceId=ide)
+    #     notificationData = NotificationData(
+    #         owner=participant,
+    #         received=validated_data['received'],
+    #         responded=validated_data['responded'],
+    #         location=validated_data['location']
+    #     )
+    #     notificationData.save()
+    #     return notificationData
