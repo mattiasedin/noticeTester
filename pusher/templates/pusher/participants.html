@@ -1,0 +1,10 @@
+{% extends "pusher/base.html" %}
+{% block main %}
+<div class="col-xs-6 col-xs-offset-3">
+	<ul class="list-group">
+		{% for participant in participants %}
+			<a href="{% url 'pusher:participant_data' participant.pk %}" class="list-group-item">{{participant.deviceId}}</a>
+		{% endfor %}
+	</ul>
+</div>
+{% endblock %}

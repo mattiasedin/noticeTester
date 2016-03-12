@@ -1,0 +1,11 @@
+{% extends "pusher/base.html" %}
+{% block main %}
+<div class="col-xs-6 col-xs-offset-3">
+	<p>{{notificationDatas.length}}</p>
+	<ul class="list-group">
+		{% for data in notificationDatas %}
+			<a href="#" class="list-group-item">{{data.getTimeRecieved}} > {{data.getTimeDiff}} at {{data.location}}</a>
+		{% endfor %}
+	</ul>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "pusher/base.html" %}
+
+{% block main %}
+<form method="post" action="{% url 'login' %}">
+		{% csrf_token %}
+		<div class="row login-row" id="content">
+			<div class="col-xs-6 col-xs-offset-3">
+				<div class="panel panel-default panel-group">
+					{% load widget_tweaks %}
+					{% if form.errors %}
+						<div class="alert alert-warning" role="alert">
+							Felaktigt användarnamn eller lösenord.
+						</div>
+					{% endif %}
+					<h3>Logga in</h3>
+	        		<h6>För att kunna använda den här tjänsten behöver du logga in.</h6>
+					<label class="control-label" for="focusedInput"><h5>Användarnamn</h5></label>
+					<p> 
+						{% render_field form.username class+="login-form-control" tabindex=1 required="True"%}
+						{{ form.username.errors }}
+					</p>
+
+					<label class="control-label" for="focusedInput"><h5>Lösenord</h5></label>
+					<p>
+						{% render_field form.password|set_data:"msg-required:hej"|set_data:"rule-required:true" class+="login-form-control" tabindex=2  required="True" %}
+						{{ form.password.errors }}
+					</p>
+					<input class="btn btn-primary btn-float-right" type="submit" value="Logga in" tabindex="3" />
+					<input type="hidden" name="next" value="{{ next }}" />
+				</div>
+			</div>
+		</div>
+		
+	</form>
+{% endblock %}
