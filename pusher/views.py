@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User, Group
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 
 from rest_framework import viewsets, generics, status
@@ -94,3 +95,15 @@ def save_notification_data(request):
             return JsonResponse({'message': "data registered"}, status=status.HTTP_201_CREATED)
         return JsonResponse(serialized.errors, status=400)
     return JsonResponse({'error': "can only accept POST request"}, status=400)
+
+@login_required(login_url='/login')
+def list_participants(request):
+    participants = Participant.objects.all()
+    return render(request, 'pusher/participants.html', {"participants":participants,})
+
+@login_required(login_url='/login')
+def list_participant_data(request, participant_id):
+    participant = Participant.objects.get(pk=participant_id)
+    notificationDatas = participant.notificationdata_set.all().order_by("received")
+
+    return render(request, 'pusher/participant_data.html', {"notificationDatas":notificationDatas,})

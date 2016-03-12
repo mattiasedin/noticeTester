@@ -60,14 +60,35 @@ class Participant(models.Model):
 	occupation = models.CharField(max_length=1, choices=OCCUPATION_CHOICES, blank=False, default="_" )
 
 class NotificationData(models.Model):
-	owner = models.ForeignKey(Participant, null=False)
-	received = models.DateField(verbose_name = 'Date recieved')
-	responded = models.DateField(verbose_name = 'Date responded')
+    owner = models.ForeignKey(Participant, null=False)
+    received = models.DateTimeField(verbose_name = 'Date recieved')
+    responded = models.DateTimeField(verbose_name = 'Date responded')
 
-	LOCATION_CHOICES = (
+    LOCATION_CHOICES = (
         ("H", "HOME"),
         ("S", "SCHOOL/UNIVERSITY"),
         ("W", "WORK"),
         ("O", "OTHER"),
     )
-	location = models.CharField(max_length=1, choices=LOCATION_CHOICES, blank=False, default="_")
+    location = models.CharField(max_length=1, choices=LOCATION_CHOICES, blank=False, default="_")
+
+    def getTimeRecieved(self, *args, **kwargs):
+        if self.received:
+            return str(self.received.hour) + ":" + str(self.received.minute) + ":" + str(self.received.second)
+        return "nothing"
+    def getTimeDiff(self, *args, **kwargs):
+        if self.received and self.responded:
+            timediff = self.responded - self.received 
+
+            minutes = 0
+            rest = timediff.total_seconds()
+
+            while rest > 60:
+                rest = rest - 60
+                minutes = minutes + 1
+
+            if minutes > 0:
+                return str(minutes)+" minutes, "+str(int(rest))+" seconds"
+            return str(int(rest))+" seconds"
+        else:
+            return "nothing"

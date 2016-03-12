@@ -16,8 +16,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.contrib.auth import views as auth_views
 from rest_framework import routers, serializers, viewsets
 from pusher import views
+
 #
 #router = routers.DefaultRouter()
 #router.register(r'users', views.UserViewSet)
@@ -27,9 +29,10 @@ from pusher import views
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     #url(r'^', include(router.urls)),
-    url(r'^api/', include('pusher.urls', namespace="pusher")),
+    url(r'^', include('pusher.urls', namespace="pusher")),
     #url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
     url(r'^admin/', admin.site.urls),
+    url(r'^login/$', auth_views.login, name="login"),
     
 ]
 # url(r'^pusher/', include('pusher.urls', namespace="pusher")),
