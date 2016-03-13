@@ -179,7 +179,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'pusher.ExampleAuth.ExampleAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
     #'DEFAULT_AUTHENTICATION_CLASSES': (
