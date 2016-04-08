@@ -5,34 +5,10 @@ from django.contrib.auth.models import User
 from django.contrib import admin
 
 
-# Create your models here.
-
-# class UserData(models.Model):
-# 	user = models.OneToOneField(User)
-# 	deviceID = models.CharField(max_length=255, blank=False, default='')
-
-
-# class notificationData(models.Model):
-# 	user = models.ForeignKey(User)
-# 	timeDelta = models.PositiveIntegerField(default=0)
-
-# 	LOW = 0
-# 	NORMAL = 1
-# 	HIGH = 2
-
-# 	STATUS_CHOICES = (
-# 	    (LOW, 'Low'),
-# 	    (NORMAL, 'Normal'),
-# 	    (HIGH, 'High'),
-# 	)
-
-# 	stresslevel = models.PositiveIntegerField(choices=STATUS_CHOICES, default=0)
-
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.conf import settings
-from django.db import models
 
 from push_notifications.models import GCMDevice
 

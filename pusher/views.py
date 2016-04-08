@@ -47,7 +47,6 @@ def save_notification_data(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
         serialized = DataSerializer(data=data)
-        #serialized = NotificationDataSerializer(data=data)
         if serialized.is_valid():
             deviceId = serialized.initial_data['deviceId']
             try:
@@ -55,7 +54,7 @@ def save_notification_data(request):
                 serialized.save(owner=participant)
                 return JsonResponse({'message': "data registered"}, status=status.HTTP_201_CREATED)
             except Participant.DoesNotExist:
-                return JsonResponse({'error': "no with requested device"}, status=status.HTTP_400_BAD_REQUEST)
+                return JsonResponse({'error': "no participant with device"}, status=status.HTTP_400_BAD_REQUEST)
                 
         return JsonResponse(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
     return JsonResponse({'error': "can only accept POST request"}, status=status.HTTP_400_BAD_REQUEST)
