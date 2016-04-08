@@ -1,11 +1,60 @@
 {% extends "common/base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+	<script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1.1','packages':['corechart']}]}"></script>
+	
+
+
+	<script type="text/javascript" src="{% static 'jquery-2.2.3.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'participant_data.js' %}"></script>
+
+	<script>
+		{% spaceless %}
+		var dataSeconds = [ 
+			{% for data in notificationDatas %} 
+				{% if data.received %} 
+					{{ data.getSecondDiff|safe }}, 
+				{% endif %} 
+			{% endfor %} 
+		];
+
+		var dataTimestamps = [ 
+			{% for data in notificationDatas %} 
+				{% if data.received %} 
+				[
+					{{ data.received.hour|safe }},
+					{{ data.received.minute|safe }},
+					{{ data.received.second|safe }} 
+				],
+				{% endif %} 
+			{% endfor %} 
+		];
+		{% endspaceless %}
+	</script>
+{% endblock %}
+
+
 {% block main %}
 <div class="col-xs-6 col-xs-offset-3">
-	<p>{{notificationDatas.length}}</p>
+
+	<div id="chart"></div>
+	<div class="settings">
+		{% spaceless %}
+		<div class="checkbox-labels">
+			<div class="label">Seconds</div>
+			<label class="android-checkbox centering"><input type="checkbox" onchange="updateCharts(this)"><span></span></label>
+			<div class="label">Minutes</div>
+		</div>
+		{% endspaceless %}
+	</div>
 	<ul class="list-group">
 		{% for data in notificationDatas %}
-			<a href="#" class="list-group-item">{{data.getTimeRecieved}} > {{data.getTimeDiff}} at {{data.location}}</a>
+			<a href="#" class="list-group-item">{{data.received.day}}/{{data.received.month}}/{{data.received.year}}  {{data.getTimeRecieved}} > {{data.getTimeDiff}} at {{data.get_location_display}}</a>
 		{% endfor %}
-	</ul>
+	</ul>	
 </div>
+
+
+
 {% endblock %}

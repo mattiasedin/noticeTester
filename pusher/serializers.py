@@ -124,3 +124,51 @@ class NotificationDataSerializer(serializers.ModelSerializer):
     #     )
     #     notificationData.save()
     #     return notificationData
+
+class RegisterSerializer(serializers.HyperlinkedModelSerializer):
+    deviceId = serializers.CharField(source='GCMDevice.registration_id')
+    class Meta:
+        model = Participant
+        fields = ('age', 'gender', 'occupation', 'deviceId')
+    def create(self, validated_data):
+        device_data = validated_data.pop('GCMDevice').pop('registration_id')
+        instance = Participant(**validated_data)
+        instance.save()
+        return instance
+        
+
+    def validate(self, data):
+        print(data)
+        if set(['age', 'gender', 'occupation', 'GCMDevice']).issubset(data):
+            return data
+        else:
+            raise serializers.ValidationError("All field must be present")
+
+class DataSerializer(serializers.HyperlinkedModelSerializer):
+    deviceId = serializers.CharField(source='GCMDevice.registration_id')
+    class Meta:
+        model = NotificationData
+        fields = ('received','responded', 'location', 'deviceId')
+        extra_kwargs = {
+            'received': {
+                'format':['%Y-%m-%d %H:%M:%S'],
+                'input_formats':['%Y-%m-%d %H:%M:%S']
+            },
+            'responded': {
+                'format':['%Y-%m-%d %H:%M:%S'],
+                'input_formats':['%Y-%m-%d %H:%M:%S']
+            }
+        }    
+    def create(self, validated_data):
+        device_data = validated_data.pop('GCMDevice').pop('registration_id')
+        instance = NotificationData(**validated_data)
+        instance.save()
+        return instance
+        
+
+    def validate(self, data):
+        print(data)
+        if set(['received','responded', 'location', 'GCMDevice']).issubset(data):
+            return data
+        else:
+            raise serializers.ValidationError("All field must be present")

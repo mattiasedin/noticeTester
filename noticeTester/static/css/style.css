@@ -1,3 +1,135 @@
 .main-body {
 	margin-top:50px;
 }
+
+.bare-list-item {
+	list-style-type: none;
+}
+
+.list-item-divided > .list-item-left, .list-item-divided > .list-item-right {
+	display:inline-block;
+}
+.list-item-divided > .list-item-left {
+	width:90%;
+}
+
+.list-item-divided > .list-item-right {
+	width:10%;}
+	.list-item-divided > .list-item-right > input[type=checkbox] {
+		margin-left:auto;
+		margin-right:auto;
+		display:block;}
+
+
+
+/* checkbox */
+
+.android-checkbox {
+	margin-bottom:0;
+	cursor: pointer; cursor: hand;
+	height:39px; }
+
+	.android-checkbox span{
+		display:block;
+		width:35px;
+		height:15px;
+		margin: 0px 5px;
+		background-color:#B0AFAF;
+		border-radius:7.5px;
+		position:relative;}
+		.android-checkbox input[type=checkbox]{display:none;}
+		.android-checkbox span:before {
+			content:"";
+			position:absolute;
+			top:-2.5px;
+			right:95%;
+			-ms-transform: translate(50%,0); /* IE 9 */
+		    -webkit-transform: translate(50%,0); /* Chrome, Safari, Opera */
+		    transform: translate(50%,0);
+			display:block;
+			-webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+		    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+			width:20px;
+			height:20px;
+			background-color:#FAFAFA;
+			border-radius:50%;
+			-webkit-transition: all 0.2s ease-in-out;
+			transition: all 0.2s ease-in-out;}
+			.android-checkbox input[type=checkbox]:checked + span, .android-checkbox input[type=checkbox]:indeterminate + span {
+				background-color:#A7CEC4;}
+			.android-checkbox input[type=checkbox]:checked + span:before, .android-checkbox input[type=checkbox]:indeterminate + span:before{
+				right:5%;
+				background-color:#34A096;}
+	.android-checkbox.android-checkbox-triple {
+		position: relative;}
+		.android-checkbox.android-checkbox-triple span{
+			margin-top:10px;
+			height: 10px;
+			width: 100px;}
+			.android-checkbox.android-checkbox-triple span:before{
+				top:-5px;}
+				.android-checkbox.android-checkbox-triple input[type=checkbox]:indeterminate + span:before{
+					right:50%;}
+				.android-checkbox.android-checkbox-triple input[type=checkbox]:checked + span:before{
+					right:5%;}
+			.android-checkbox.android-checkbox-triple .labels {
+				display:block;
+				position:absolute;
+				height: 10px;
+				width:100%;
+				top: 0;
+				left:0;}
+				.android-checkbox.android-checkbox-triple .labels div{
+					display:inline-block;
+					height:100%;
+					width:33%;
+					vertical-align: top;}
+					.android-checkbox.android-checkbox-triple .labels div:before{
+						font-size:10px;
+						line-height:10px;
+						vertical-align: top;}
+						.android-checkbox.android-checkbox-triple .labels div.manual {
+							text-align:left;
+							width:35%;}
+							.android-checkbox.android-checkbox-triple .labels div.manual:before{
+								content:"manuell";}
+						.android-checkbox.android-checkbox-triple .labels div.auto {
+							text-align:center;
+							width:30%;}
+							.android-checkbox.android-checkbox-triple .labels div.auto:before{
+								content:"auto";}
+						.android-checkbox.android-checkbox-triple .labels div.max {
+							text-align:right;
+							float:right;
+							width:35%;}
+							.android-checkbox.android-checkbox-triple .labels div.max:before{
+								content:"max";}
+			
+
+/* end checkbox */
+
+.settings {
+	width:100%;
+	text-align:center;
+	margin-bottom:20px;}
+	.checkbox-labels {
+		display:inline-block;}
+		.checkbox-labels > label {
+			height:initial;}
+		.checkbox-labels > .label {
+			display:inline-block;
+			height:100%;
+			color:#555;}
+
+
+/* BOOTSTRAP OVERWRITES */
+
+.list-group {
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+
+
+
+

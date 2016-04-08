@@ -1,10 +1,25 @@
 {% extends "common/base.html" %}
+
 {% block main %}
 <div class="col-xs-6 col-xs-offset-3">
-	<ul class="list-group">
-		{% for participant in participants %}
-			<a href="{% url 'pusher:participant_data' participant.pk %}" class="list-group-item">{{participant.deviceId}}</a>
-		{% endfor %}
-	</ul>
+	<form method="post">
+		{% csrf_token %}
+		{{ formset.management_form }}
+		{% spaceless %}
+		<ul class="list-group">
+			{% for form, participant in ziped_data %}
+				<li class="bare-list-item list-item-divided">
+					<a href="{% url 'pusher:participant_data' participant.pk %}" class="list-group-item list-item-left">
+						{{participant}} {% for data in participant.notificationData_set.all %} {{data.recieved}} {% endfor %}
+					</a>
+					<div class="list-item-right">{{form.push}} {{form.id}}</div>
+				</li>
+			{% endfor %}
+		</ul>
+		{% endspaceless %}
+		<div class="form-group">
+			<input class="btn btn-primary" type="submit" value="Push" />
+		</div>
+	</form>
 </div>
 {% endblock %}

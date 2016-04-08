@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 import dj_database_url
+from .GCM_settings import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -127,7 +128,7 @@ TIME_ZONE = 'Europe/Stockholm'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-USE_THOUSAND_SEPARATOR = True
+#USE_THOUSAND_SEPARATOR = True
 
 
 
@@ -194,6 +195,7 @@ REST_FRAMEWORK = {
 }
 
 PUSH_NOTIFICATIONS_SETTINGS = {
-        "GCM_API_KEY": "[your api key]",
-        "APNS_CERTIFICATE": "/path/to/your/certificate.pem",
+    "GCM_API_KEY": GCM_KEY,
+    "APNS_CERTIFICATE": "/path/to/your/certificate.pem",
+    "USER_MODEL": "pusher.Participant"
 }

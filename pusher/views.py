@@ -17,6 +17,8 @@ from rest_framework.authtoken.models import Token
 
 from .models import *
 from .serializers import *
+from .forms import *
+import datetime
 
 
 @api_view(['GET'])
@@ -72,15 +74,24 @@ def create_auth(request):
         return JsonResponse({'error': "an error has occured"}, status=400)
         #return Response("an error has occured", status=status.HTTP_400_BAD_REQUEST)
         #return HttpResponse("an error has occured", status=status.HTTP_400_BAD_REQUEST)
-        #
+
+from push_notifications.models import GCMDevice
+
 @csrf_exempt
 def register_participant(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
-        serialized = ParticipantSerializer(data=data)
+        serialized = RegisterSerializer(data=data)
         if serialized.is_valid():
-            serialized.save()
-            return JsonResponse({'message': "participant registered"}, status=status.HTTP_201_CREATED)
+            deviceId = serialized.initial_data['deviceId']
+            try:
+                GCMDevice.objects.get(registration_id=deviceId)
+                return HttpResponse("user with device already exists", status=status.HTTP_400_BAD_REQUEST)
+            except GCMDevice.DoesNotExist:
+                device = GCMDevice(registration_id=deviceId)
+                device.save()
+                participant = serialized.save(device=device)
+                return JsonResponse({'message': "participant registered"}, status=status.HTTP_201_CREATED)
         return JsonResponse(serialized.errors, status=400)
     return JsonResponse({'error': "can only accept POST request"}, status=400)
 
@@ -88,22 +99,53 @@ def register_participant(request):
 def save_notification_data(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
-        serialized = NotificationDataSerializer(data=data)
-        import pdb;pdb.set_trace()
+        serialized = DataSerializer(data=data)
+        #serialized = NotificationDataSerializer(data=data)
         if serialized.is_valid():
-            serialized.save()
-            return JsonResponse({'message': "data registered"}, status=status.HTTP_201_CREATED)
-        return JsonResponse(serialized.errors, status=400)
-    return JsonResponse({'error': "can only accept POST request"}, status=400)
+            deviceId = serialized.initial_data['deviceId']
+            try:
+                participant = Participant.objects.get(device__registration_id=deviceId)
+                serialized.save(owner=participant)
+                return JsonResponse({'message': "data registered"}, status=status.HTTP_201_CREATED)
+            except Participant.DoesNotExist:
+                return JsonResponse({'error': "no with requested device"}, status=status.HTTP_400_BAD_REQUEST)
+                
+        return JsonResponse(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+    return JsonResponse({'error': "can only accept POST request"}, status=status.HTTP_400_BAD_REQUEST)
+
+from django.db.models import Max
+
 
 @login_required(login_url='/login')
 def list_participants(request):
-    participants = Participant.objects.all()
-    return render(request, 'pusher/participants.html', {"participants":participants,})
+    participants = Participant.objects.annotate(latest_order=Max('notificationdata__responded')).order_by('latest_order')
+    #participants = Participant.objects.all().prefetch_related('notificationdata_set')
+    if request.method == "POST":
+        #import pdb;pdb.set_trace()
+        formset = ParticipantFormSet(request.POST, queryset = participants)
+        if formset.is_valid():
+            participant_to_push = []
+            for form in formset.forms:
+                if form.cleaned_data['push']:
+                    participant_to_push.append(form.instance)
+            for participant in participant_to_push:
+                import pdb;pdb.set_trace()
+                data = NotificationData(owner=participant, server_sent=datetime.datetime.now())
+                data.save()
+                device = participant.device
+                device.send_message(None, extra={"messegeId": str(data.pk)})
+    else:
+        formset = ParticipantFormSet(queryset=participants)
+    return render(request, 'pusher/participants.html', {"formset":formset, "ziped_data":zip(formset.forms,participants)})
 
 @login_required(login_url='/login')
 def list_participant_data(request, participant_id):
     participant = Participant.objects.get(pk=participant_id)
-    notificationDatas = participant.notificationdata_set.all().order_by("received")
+    notificationDatas = participant.notificationdata_set.all().order_by("-received")
 
+    return render(request, 'pusher/participant_data.html', {"notificationDatas":notificationDatas,})
+
+@login_required(login_url='/login')
+def list_all_data(request):
+    notificationDatas = NotificationData.objects.all()
     return render(request, 'pusher/participant_data.html', {"notificationDatas":notificationDatas,})

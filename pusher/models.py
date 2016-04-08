@@ -2,6 +2,9 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib import admin
+
+
 # Create your models here.
 
 # class UserData(models.Model):
@@ -29,6 +32,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.conf import settings
+from django.db import models
+
+from push_notifications.models import GCMDevice
 
 
 # This code is triggered whenever a new user has been created and saved to the database
@@ -39,30 +45,38 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 
 class UserDevice(models.Model):
-	owner = models.OneToOneField('auth.User', related_name='deviceInfo')
-	deviceId = models.CharField(max_length=255, blank=False, unique=True)
+    owner = models.OneToOneField('auth.User', related_name='deviceInfo')
+    deviceId = models.CharField(max_length=255, blank=False, unique=True)
 
 class Participant(models.Model):
-	deviceId = models.CharField(max_length=255, blank=False, unique=True)
+    #deviceId = models.CharField(max_length=255, blank=False, unique=True)
+    device = models.OneToOneField(GCMDevice, related_name='participant', null=False, on_delete=models.CASCADE)
 
-	GENDER_CHOICES = (
+    age = models.IntegerField()
+
+    GENDER_CHOICES = (
         ("M", "MALE"),
         ("F", "FEMALE"),
     )
-	gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=False, default="_")
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=False, default="_")
 
-	OCCUPATION_CHOICES = (
+    OCCUPATION_CHOICES = (
         ("S", "STUDENT"),
         ("E", "EMPLOYED"),
         ("O", "OTHER"),
     )
-    
-	occupation = models.CharField(max_length=1, choices=OCCUPATION_CHOICES, blank=False, default="_" )
+
+    occupation = models.CharField(max_length=1, choices=OCCUPATION_CHOICES, blank=False, default="_")
+
+    def __unicode__(self):
+        return str(self.age) + " Years, " + self.get_gender_display() + ", " + self.get_occupation_display() + " (" + self.device.registration_id + ")"
 
 class NotificationData(models.Model):
     owner = models.ForeignKey(Participant, null=False)
-    received = models.DateTimeField(verbose_name = 'Date recieved')
-    responded = models.DateTimeField(verbose_name = 'Date responded')
+    server_sent = models.DateTimeField(verbose_name = 'Date sent')
+    received = models.DateTimeField(verbose_name = 'Date recieved', null=True)
+    responded = models.DateTimeField(verbose_name = 'Date responded', null=True)
+    server_recieved = models.DateTimeField(verbose_name = 'Date sent', null=True)
 
     LOCATION_CHOICES = (
         ("H", "HOME"),
@@ -71,6 +85,9 @@ class NotificationData(models.Model):
         ("O", "OTHER"),
     )
     location = models.CharField(max_length=1, choices=LOCATION_CHOICES, blank=False, default="_")
+
+    def __unicode__(self):
+        return self.getTimeRecieved() + " - " + self.getTimeDiff()
 
     def getTimeRecieved(self, *args, **kwargs):
         if self.received:
@@ -92,3 +109,12 @@ class NotificationData(models.Model):
             return str(int(rest))+" seconds"
         else:
             return "nothing"
+    def getSecondDiff(self, *args, **kwargs):
+        if self.responded and self.received:
+            timediff = self.responded - self.received 
+            return timediff.total_seconds()
+        else:
+            return -1
+
+admin.site.register(Participant)
+admin.site.register(NotificationData)
