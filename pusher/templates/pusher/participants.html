@@ -1,11 +1,29 @@
 {% extends "common/base.html" %}
 
+{% load staticfiles %}
+
+
+{% block head %}
+	<script type="text/javascript" src="{% static 'participant.js' %}"></script>
+{% endblock %}
+
 {% block main %}
 <div class="col-xs-6 col-xs-offset-3">
 	<form method="post">
 		{% csrf_token %}
 		{{ formset.management_form }}
 		{% spaceless %}
+
+		<div class="bare-list-item list-item-divided" style="margin-bottom:20px">
+			<div class=" list-item-left">
+				<h3>Participants</h3>
+			</div>
+			<div class="list-item-right">
+				<p>Check all</p>
+				<input type="checkbox" onchange="toggleAll(this)">
+			</div>
+		</div>
+
 		<ul class="list-group">
 			{% for form, participant in ziped_data %}
 				<li class="bare-list-item list-item-divided">
@@ -16,9 +34,31 @@
 				</li>
 			{% endfor %}
 		</ul>
+
+		<div class="bare-list-item list-item-divided">
+			<div class=" list-item-left"></div>
+			<div class="list-item-right">
+				<input class="btn btn-primary" type="submit" value="Push" />
+			</div>
+		</div>
+
 		{% endspaceless %}
+		<ul class="list-group">
+			<li class="bare-list-item">
+				Males: {{nrMales}}
+			</li>
+			<li class="bare-list-item">
+				Womans: {{nrWomans}}
+			</li>
+			<li class="bare-list-item">
+				Occupations: (Students: {{nrStudents}}, Employed: {{nrEmployed}}, other: {{nrOther}})
+			</li>
+		</ul>
 		<div class="form-group">
-			<input class="btn btn-primary" type="submit" value="Push" />
+			<a class="btn btn-default" href="{% url 'pusher:all_data' %}">Show all</a>
+			<a class="btn btn-default" href="{% url 'pusher:occupation_data' %}?occupation=S">Show students</a>
+			<a class="btn btn-default" href="{% url 'pusher:occupation_data' %}?occupation=E">Show employed</a>
+			<a class="btn btn-default" href="{% url 'pusher:occupation_data' %}?occupation=O">Show other</a>
 		</div>
 	</form>
 </div>

@@ -11,7 +11,8 @@ urlpatterns = [
     url(r'^api/register/', views.register_participant),
     url(r'^api/notification/', views.save_notification_data),
     url(r'^participants/$', views.list_participants),
-    url(r'^participants/all/$', views.list_all_data),
+    url(r'^participants/all/$', views.list_all_data, name="all_data"),
+    url(r'^participants/occupation/$', views.list_occupation_data, name="occupation_data"),
     url(r'^participants/(?P<participant_id>\d+)/$', views.list_participant_data, name="participant_data"),
 ]
 
