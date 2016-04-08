@@ -51,7 +51,7 @@ def save_notification_data(request):
             deviceId = serialized.initial_data['deviceId']
             try:
                 participant = Participant.objects.get(device__registration_id=deviceId)
-                serialized.save(owner=participant)
+                serialized.save(owner=participant, server_recieved=datetime.datetime.now())
                 return JsonResponse({'message': "data registered"}, status=status.HTTP_201_CREATED)
             except Participant.DoesNotExist:
                 return JsonResponse({'error': "no participant with device"}, status=status.HTTP_400_BAD_REQUEST)
