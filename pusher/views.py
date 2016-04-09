@@ -42,6 +42,29 @@ def register_participant(request):
         return JsonResponse(serialized.errors, status=400)
     return JsonResponse({'error': "can only accept POST request"}, status=400)
 
+
+@csrf_exempt
+def update_token(request):
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        try:
+            oldDeviceId = data['oldToken']
+            newDeviceId = data['newToken']
+
+            participant = Participant.objects.get(device__registration_id=oldDeviceId)
+            
+            device = participant.device
+            device.registration_id = newDeviceId
+            device.save()
+            return JsonResponse({'message': "data registered"}, status=status.HTTP_201_CREATED)
+        except KeyError:
+            return JsonResponse({'error': "tokens not pressent"}, status=status.HTTP_400_BAD_REQUEST)
+        except Participant.DoesNotExist:
+            return JsonResponse({'error': "no participant with given device"}, status=status.HTTP_400_BAD_REQUEST)
+    return JsonResponse({'error': "can only accept POST request"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 @csrf_exempt
 def save_notification_data(request):
     if request.method == 'POST':

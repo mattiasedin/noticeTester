@@ -9,6 +9,7 @@ urlpatterns = [
     #url(r'^register/', views.create_auth),
     #url(r'^token-auth/', rest_views.obtain_auth_token),
     url(r'^api/register/', views.register_participant),
+    url(r'^api/update/', views.update_token),
     url(r'^api/notification/', views.save_notification_data),
     url(r'^participants/$', views.list_participants),
     url(r'^participants/all/$', views.list_all_data, name="all_data"),
