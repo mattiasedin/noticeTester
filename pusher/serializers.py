@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import *
+import datetime
 
 
 # class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -145,10 +146,10 @@ class RegisterSerializer(serializers.HyperlinkedModelSerializer):
             raise serializers.ValidationError("All field must be present")
 
 class DataSerializer(serializers.HyperlinkedModelSerializer):
-    deviceId = serializers.CharField(source='GCMDevice.registration_id')
+    messageId = serializers.IntegerField()
     class Meta:
         model = NotificationData
-        fields = ('received','responded', 'location', 'deviceId')
+        fields = ('received','responded', 'location', 'messageId')
         extra_kwargs = {
             'received': {
                 'format':['%Y-%m-%d %H:%M:%S'],
@@ -160,15 +161,25 @@ class DataSerializer(serializers.HyperlinkedModelSerializer):
             }
         }    
     def create(self, validated_data):
-        device_data = validated_data.pop('GCMDevice').pop('registration_id')
+        messageId = validated_data.pop('messageId')
         instance = NotificationData(**validated_data)
         instance.save()
         return instance
         
+    def update(self, instance, validated_data):
+        """
+        Update and return an existing `Snippet` instance, given the validated data.
+        """
+        instance.received = validated_data.get('received', instance.received)
+        instance.responded = validated_data.get('responded', instance.responded)
+        instance.server_recieved = datetime.datetime.now()
+        instance.location = validated_data.get('location', instance.location)
+        instance.save()
+        return instance
 
     def validate(self, data):
         print(data)
-        if set(['received','responded', 'location', 'GCMDevice']).issubset(data):
+        if set(['received','responded', 'location', 'messageId']).issubset(data):
             return data
         else:
             raise serializers.ValidationError("All field must be present")

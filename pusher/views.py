@@ -46,17 +46,19 @@ def register_participant(request):
 def save_notification_data(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
-        serialized = DataSerializer(data=data)
-        if serialized.is_valid():
-            deviceId = serialized.initial_data['deviceId']
-            try:
-                participant = Participant.objects.get(device__registration_id=deviceId)
-                serialized.save(owner=participant, server_recieved=datetime.datetime.now())
+        import pdb;pdb.set_trace()
+        try:
+            messageId = data['messageId']
+            instance = NotificationData.objects.get(pk=messageId)
+            serialized = DataSerializer(instance, data=data)
+            if serialized.is_valid():
+                serialized.save()
                 return JsonResponse({'message': "data registered"}, status=status.HTTP_201_CREATED)
-            except Participant.DoesNotExist:
-                return JsonResponse({'error': "no participant with device"}, status=status.HTTP_400_BAD_REQUEST)
-                
-        return JsonResponse(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+        except KeyError:
+            return JsonResponse({'error': "messageId not pressent"}, status=status.HTTP_400_BAD_REQUEST)
+        except NotificationData.DoesNotExist:
+            return JsonResponse({'error': "no message with given ID"}, status=status.HTTP_400_BAD_REQUEST)
     return JsonResponse({'error': "can only accept POST request"}, status=status.HTTP_400_BAD_REQUEST)
 
 from django.db.models import Max
@@ -67,7 +69,6 @@ def list_participants(request):
     participants = Participant.objects.annotate(latest_order=Max('notificationdata__responded')).order_by('latest_order')
     #participants = Participant.objects.all().prefetch_related('notificationdata_set')
     if request.method == "POST":
-        #import pdb;pdb.set_trace()
         formset = ParticipantFormSet(request.POST, queryset = participants)
         if formset.is_valid():
             participant_to_push = []
@@ -78,7 +79,8 @@ def list_participants(request):
                 data = NotificationData(owner=participant, server_sent=datetime.datetime.now())
                 data.save()
                 device = participant.device
-                device.send_message(None, extra={"messegeId": str(data.pk)})
+                import pdb;pdb.set_trace()
+                device.send_message(None, extra={"messageId": str(data.pk)})
     else:
         formset = ParticipantFormSet(queryset=participants)
     nrMales = Participant.objects.filter(gender='M').count()
