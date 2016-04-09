@@ -101,7 +101,7 @@ def list_participant_data(request, participant_id):
     participant = Participant.objects.get(pk=participant_id)
     notificationDatas = participant.notificationdata_set.all().order_by("-received")
 
-    return render(request, 'pusher/participant_data.html', {"notificationDatas":notificationDatas,})
+    return render(request, 'pusher/participant_data.html', {"notificationDatas":notificationDatas, "participant":participant})
 
 @login_required(login_url='/login')
 def list_all_data(request):

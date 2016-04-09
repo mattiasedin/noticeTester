@@ -44,7 +44,9 @@
 		</div>
 		{% endspaceless %}
 	</div>
-	<p>Device: {{data.owner.device.registration_id}}</p>
+	{% if participant %}
+		<p>Device: {{participant.device.registration_id}}</p>
+	{% endif %}
 	<ul class="list-group">
 		{% for data in notificationDatas %}
 			<a href="#" class="list-group-item">{{data.received.day}}/{{data.received.month}}/{{data.received.year}}  {{data.getTimeRecieved}} > {{data.getTimeDiff}} at {{data.get_location_display}}</a>
