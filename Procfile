@@ -1,1 +1,1 @@
-web: bin/proximo gunicorn noticeTester.wsgi --log-file -
+web: gunicorn noticeTester.wsgi --log-file -
