@@ -45,7 +45,7 @@ class Participant(models.Model):
     occupation = models.CharField(max_length=1, choices=OCCUPATION_CHOICES, blank=False, default="_")
 
     def __unicode__(self):
-        return str(self.age) + " Years, " + self.get_gender_display() + ", " + self.get_occupation_display() + " (" + self.device.registration_id + ")"
+        return str(self.age) + " Years, " + self.get_gender_display() + ", " + self.get_occupation_display()
 
 class NotificationData(models.Model):
     owner = models.ForeignKey(Participant, null=False)
