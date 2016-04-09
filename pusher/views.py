@@ -46,7 +46,6 @@ def register_participant(request):
 def save_notification_data(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
-        import pdb;pdb.set_trace()
         try:
             messageId = data['messageId']
             instance = NotificationData.objects.get(pk=messageId)
@@ -79,7 +78,6 @@ def list_participants(request):
                 data = NotificationData(owner=participant, server_sent=datetime.datetime.now())
                 data.save()
                 device = participant.device
-                import pdb;pdb.set_trace()
                 device.send_message(None, extra={"messageId": str(data.pk)})
     else:
         formset = ParticipantFormSet(queryset=participants)
