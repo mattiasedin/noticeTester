@@ -33,7 +33,8 @@ def register_participant(request):
             deviceId = serialized.initial_data['deviceId']
             try:
                 GCMDevice.objects.get(registration_id=deviceId)
-                return HttpResponse("user with device already exists", status=status.HTTP_400_BAD_REQUEST)
+                return JsonResponse({'message': "participant already exists"}, status=status.HTTP_201_CREATED)
+                #return HttpResponse("user with device already exists", status=status.HTTP_400_BAD_REQUEST)
             except GCMDevice.DoesNotExist:
                 device = GCMDevice(registration_id=deviceId)
                 device.save()
@@ -88,7 +89,7 @@ from django.db.models import Max
 
 @login_required(login_url='/login')
 def list_participants(request):
-    participants = Participant.objects.annotate(latest_order=Max('notificationdata__responded')).order_by('latest_order')
+    participants = Participant.objects.filter(active=True).annotate(latest_order=Max('notificationdata__responded')).order_by('latest_order')
     #participants = Participant.objects.all().prefetch_related('notificationdata_set')
     if request.method == "POST":
         formset = ParticipantFormSet(request.POST, queryset = participants)
@@ -104,11 +105,13 @@ def list_participants(request):
                 device.send_message(None, extra={"messageId": str(data.pk)})
     else:
         formset = ParticipantFormSet(queryset=participants)
+
+    total = Participant.objects.all().count()
     nrMales = Participant.objects.filter(gender='M').count()
-    nrWomans = participants.count() - nrMales
+    nrWomans = total - nrMales
     nrStudents = Participant.objects.filter(occupation='S').count()
     nrEmployed = Participant.objects.filter(occupation='E').count()
-    nrOther = participants.count() - nrStudents - nrEmployed
+    nrOther = total - nrStudents - nrEmployed
     
     return render(request, 'pusher/participants.html', {
         "formset":formset, 
@@ -118,6 +121,29 @@ def list_participants(request):
         "nrStudents":nrStudents,
         "nrEmployed":nrEmployed, 
         "nrOther":nrOther })
+
+@login_required(login_url='/login')
+def deactivate_participants(request):
+    participants = Participant.objects.annotate(latest_order=Max('notificationdata__responded')).order_by('latest_order')
+    #participants = Participant.objects.all().prefetch_related('notificationdata_set')
+    if request.method == "POST":
+        formset = ParticipantFormSet(request.POST, queryset = participants)
+        if formset.is_valid():
+            participant_to_push = []
+            for form in formset.forms:
+                if form.cleaned_data['push']:
+                    participant_to_push.append(form.instance)
+            for participant in participant_to_push:
+                participant.active = not participant.active
+                if not participant.active:
+                    device = participant.device
+                    device.send_message(None, extra={"active": False})
+                participant.save()
+    else:
+        formset = ParticipantFormSet(queryset=participants)    
+    return render(request, 'pusher/participants_deactivate.html', {
+        "formset":formset, 
+        "ziped_data":zip(formset.forms,participants) })
 
 @login_required(login_url='/login')
 def list_participant_data(request, participant_id):

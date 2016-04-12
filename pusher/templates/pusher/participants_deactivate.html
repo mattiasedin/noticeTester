@@ -1,0 +1,60 @@
+{% extends "common/base.html" %}
+
+{% load staticfiles %}
+
+
+{% block head %}
+	<script type="text/javascript" src="{% static 'participant.js' %}"></script>
+{% endblock %}
+
+{% block main %}
+<div class="col-xs-6 col-xs-offset-3">
+	<form method="post">
+		{% csrf_token %}
+		{{ formset.management_form }}
+		{% spaceless %}
+
+		<div class="row">
+			<div class="col-xs-6">
+				<ul class="list-group">
+					{% for form, participant in ziped_data %}
+					{% if participant.active %}
+						<li class="bare-list-item list-item-divided">
+							<a href="{% url 'pusher:participant_data' participant.pk %}" class="list-group-item list-item-left">
+								{{participant}} - {{participant.getActiveDays}} 
+							</a>
+							<div class="list-item-right">{{form.push}} {{form.id}}</div>
+						</li>
+					{% endif %}
+					{% endfor %}
+				</ul>
+			</div>
+			<div class="col-xs-6">
+				<ul class="list-group">
+					{% for form, participant in ziped_data %}
+					{% if not participant.active %}
+						<li class="bare-list-item list-item-divided">
+							<a href="{% url 'pusher:participant_data' participant.pk %}" class="list-group-item list-item-left">
+								{{participant}} - {{participant.getActiveDays}} 
+							</a>
+							<div class="list-item-right">{{form.id}}</div>
+						</li>
+					{% endif %}
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+		<div class="bare-list-item list-item-divided">
+			<div class=" list-item-left"></div>
+			<div class="list-item-right">
+				<input class="btn btn-primary" type="submit" value="Toggle" />
+			</div>
+		</div>
+
+		{% endspaceless %}
+		<div class="form-group">
+			<a class="btn btn-default" href="{% url 'pusher:participants' %}">Back</a>
+		</div>
+	</form>
+</div>
+{% endblock %}

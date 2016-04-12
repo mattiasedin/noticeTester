@@ -60,6 +60,9 @@
 			<a class="btn btn-default" href="{% url 'pusher:occupation_data' %}?occupation=E">Show employed</a>
 			<a class="btn btn-default" href="{% url 'pusher:occupation_data' %}?occupation=O">Show other</a>
 		</div>
+		<div class="form-group">
+			<a class="btn btn-default" href="{% url 'pusher:participants_deactivate' %}">Deactivate participants</a>
+		</div>
 	</form>
 </div>
 {% endblock %}
