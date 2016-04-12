@@ -12,6 +12,9 @@ from django.conf import settings
 
 from push_notifications.models import GCMDevice
 
+from datetime import datetime    
+from django.utils import timezone
+
 
 # This code is triggered whenever a new user has been created and saved to the database
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -27,8 +30,10 @@ class UserDevice(models.Model):
 class Participant(models.Model):
     #deviceId = models.CharField(max_length=255, blank=False, unique=True)
     device = models.OneToOneField(GCMDevice, related_name='participant', null=False, on_delete=models.CASCADE)
-
+    active = models.BooleanField(default=True)
     age = models.IntegerField()
+    registered = models.DateTimeField(default=datetime.now, blank=False)
+
 
     GENDER_CHOICES = (
         ("M", "MALE"),
@@ -46,6 +51,10 @@ class Participant(models.Model):
 
     def __unicode__(self):
         return str(self.age) + " Years, " + self.get_gender_display() + ", " + self.get_occupation_display()
+
+    def getActiveDays(self):
+        delta = timezone.now() - self.registered
+        return str(delta.days) + " days"
 
 class NotificationData(models.Model):
     owner = models.ForeignKey(Participant, null=False)
