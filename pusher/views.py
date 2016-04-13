@@ -137,7 +137,7 @@ def deactivate_participants(request):
                 participant.active = not participant.active
                 if not participant.active:
                     device = participant.device
-                    device.send_message(None, extra={"active": 0})
+                    device.send_message(None, extra={"active": "false"})
                 participant.save()
     else:
         formset = ParticipantFormSet(queryset=participants)    
