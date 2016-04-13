@@ -71,6 +71,16 @@ class NotificationData(models.Model):
     )
     location = models.CharField(max_length=1, choices=LOCATION_CHOICES, blank=False, default="_")
 
+    STRESS_CHOICES = (
+        (-1, "choose one"),
+        (1, "not at all"),
+        (2, "just a little"),
+        (3, "to some extent"),
+        (4, "rather much"),
+        (5, "very much"),
+    )
+    stress = models.IntegerField(choices=STRESS_CHOICES, blank=False, default=-1)
+
     def __unicode__(self):
         return self.getTimeRecieved() + " - " + self.getTimeDiff()
 
