@@ -63,13 +63,15 @@ class NotificationData(models.Model):
     responded = models.DateTimeField(verbose_name = 'Date responded', null=True)
     server_recieved = models.DateTimeField(verbose_name = 'Date sent', null=True)
 
-    LOCATION_CHOICES = (
-        ("H", "HOME"),
-        ("S", "SCHOOL/UNIVERSITY"),
-        ("W", "WORK"),
-        ("O", "OTHER"),
+    BUSY_CHOICES = (
+        (-1, "choose one"),
+        (1, "not at all"),
+        (2, "just a little"),
+        (3, "to some extent"),
+        (4, "rather much"),
+        (5, "very much"),
     )
-    location = models.CharField(max_length=1, choices=LOCATION_CHOICES, blank=False, default="_")
+    busyness = models.IntegerField(choices=BUSY_CHOICES, blank=False, default=-1)
 
     STRESS_CHOICES = (
         (-1, "choose one"),

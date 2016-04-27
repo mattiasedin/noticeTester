@@ -149,7 +149,7 @@ class DataSerializer(serializers.HyperlinkedModelSerializer):
     messageId = serializers.IntegerField()
     class Meta:
         model = NotificationData
-        fields = ('received','responded', 'location', 'messageId', 'stress')
+        fields = ('received','responded', 'busyness', 'messageId', 'stress')
         extra_kwargs = {
             'received': {
                 'format':['%Y-%m-%d %H:%M:%S'],
@@ -173,14 +173,14 @@ class DataSerializer(serializers.HyperlinkedModelSerializer):
         instance.received = validated_data.get('received', instance.received)
         instance.responded = validated_data.get('responded', instance.responded)
         instance.server_recieved = datetime.datetime.now()
-        instance.location = validated_data.get('location', instance.location)
+        instance.busyness = validated_data.get('busyness', instance.busyness)
         instance.stress = validated_data.get('stress', instance.stress)
         instance.save()
         return instance
 
     def validate(self, data):
         print(data)
-        if set(['received','responded', 'location', 'messageId', 'stress']).issubset(data):
+        if set(['received','responded', 'busyness', 'messageId', 'stress']).issubset(data):
             return data
         else:
             raise serializers.ValidationError("All field must be present")
